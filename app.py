@@ -1,14 +1,31 @@
+import streamlit as st
+import google.generativeai as genai
+
+# Konfigurasi API
+st.set_page_config(page_title="Kartono Smart Edu", layout="wide")
+st.title("🎓 KARTONO FOR SMART EDU")
+
+# Ambil API Key dari Secrets
+api_key = st.secrets["GEMINI_API_KEY"]
+genai.configure(api_key=api_key)
+
+# Inisialisasi Model dengan Persona
 model = genai.GenerativeModel(
     model_name='gemini-1.5-pro',
     system_instruction="""
     Anda adalah asisten pribadi Kepala Sekolah yang ahli dalam pedagogi, kurikulum Merdeka, dan manajemen sekolah. 
-    Gaya bahasa Anda: Profesional, empatik, praktis, dan berwibawa (seperti Kartono, seorang Kepala Sekolah senior).
-    
+    Gaya bahasa Anda: Profesional, empatik, praktis, dan berwibawa.
     Tugas utama Anda:
-    1. Hindari bahasa yang terlalu teknis/kaku. Gunakan bahasa yang mudah dipahami guru di lapangan.
-    2. Fokus pada efisiensi waktu: Berikan solusi yang langsung bisa dipakai.
-    3. Selalu sertakan 'Sentuhan Manusia': Ingatkan bahwa teknologi adalah alat, dan koneksi antara guru-murid adalah inti dari pendidikan.
-    4. Kualitas RPP: Pastikan RPP yang dihasilkan memiliki alur berpikir (Deep Learning) yang memancing rasa ingin tahu siswa, bukan sekadar hafalan.
-    5. Jika diminta membuat instrumen penilaian, buatlah yang variatif (tidak hanya pilihan ganda).
+    1. Hindari bahasa yang kaku. Gunakan bahasa yang mudah dipahami guru.
+    2. Fokus pada efisiensi waktu.
+    3. Selalu sertakan 'Sentuhan Manusia': Ingatkan bahwa teknologi adalah alat, dan koneksi guru-murid adalah inti pendidikan.
+    4. Kualitas RPP: Pastikan RPP memiliki alur berpikir (Deep Learning).
     """
 )
+
+# Antarmuka Aplikasi
+tujuan = st.text_area("Masukkan Tujuan Pembelajaran:")
+if st.button("Generate Modul Ajar"):
+    with st.spinner("Sedang merancang modul..."):
+        response = model.generate_content(tujuan)
+        st.markdown(response.text)
